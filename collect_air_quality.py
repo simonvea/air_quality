@@ -43,6 +43,8 @@ def saveData(eCO2, TVOC, room = "office"):
 latestCO2 = []
 latestTVOC = []
 
+print("Started measurement")
+
 while True:
     result = sgp30.get_air_quality()
     latestCO2.append(result.equivalent_co2)
