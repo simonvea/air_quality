@@ -4,15 +4,11 @@ from sgp30 import SGP30
 import time
 from datetime import datetime
 import sys
-from save_to_csv import saveAirQualityToCSV
+from save_to_csv import saveAirQualityToCSV as saveLocally
+from influx_db import saveToDb
 
 sgp30 = SGP30()
 
-# Only starts actual measurments after 15s of values.
-# < 500 CO2 and < 50 TVOC is good air quality
-#  500-100 CO2 is a little uncomfortable, 50-750 TVOC is uncomfortable
-# 1000-2500 CO2 will make you tired, 750-6000 TVOC will lead to headache and depressive
-# 2500-5000 CO2 is unhealthy, >6000 TVOC will lead to headache and other nerve problems
 
 # result = sgp30.command('set_baseline', (0xFECA, 0xBEBA))
 # result = sgp30.command('get_baseline')
@@ -43,7 +39,7 @@ while True:
     latestTVOC.append(result.total_voc)
     if len(latestCO2) > 59:
         before = datetime.now()
-        saveAirQualityToCSV(average(latestCO2), average(latestTVOC))
+        saveToDb(average(latestCO2), average(latestTVOC))
         latestCO2.clear()
         latestTVOC.clear()
         after = datetime.now()
