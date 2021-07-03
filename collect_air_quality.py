@@ -6,9 +6,13 @@ from datetime import datetime
 import sys
 from save_to_csv import saveAirQualityToCSV as saveLocally
 from influx_db import saveToDb
+from air_lights import refreshLights
 
 sgp30 = SGP30()
 
+arguments = sys.argv
+useLocalDb = len(arguments) > 1 and (arguments[1] == 'local' or arguments[1] == '-l')
+useLights = True
 
 # result = sgp30.command('set_baseline', (0xFECA, 0xBEBA))
 # result = sgp30.command('get_baseline')
@@ -29,6 +33,12 @@ sys.stdout.write('\n')
 def average(data):
     return round(sum(data) / len(data))
 
+def saveData(eCO2, TVOC, room = "office"):
+    if(useLocalDb):
+        saveLocally(eCO2, TVOC)
+    else:
+        saveToDb(eCO2, TVOC, room)
+
 
 latestCO2 = []
 latestTVOC = []
@@ -39,7 +49,11 @@ while True:
     latestTVOC.append(result.total_voc)
     if len(latestCO2) > 59:
         before = datetime.now()
-        saveToDb(average(latestCO2), average(latestTVOC))
+        eCO2 = average(latestCO2)
+        TVOC = average(latestTVOC)
+        saveData(eCO2, TVOC)
+        if(useLights):
+            refreshLights(eCO2, TVOC)
         latestCO2.clear()
         latestTVOC.clear()
         after = datetime.now()
