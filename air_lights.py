@@ -6,6 +6,12 @@ green = LED(16)
 orange = LED(20)
 red = LED(21)
 
+#All are max for that area
+TVOC_MODERATE = 660
+TVOC_GOOD = 250
+CO2_MODERATE = 2000
+CO2_GOOD = 1000
+
 def turnOnGreen():
     if(red.is_active):
         red.off()
@@ -34,9 +40,9 @@ def turnOnRed():
 
 
 def refreshLights(eCO2, TVOC):
-    if(eCO2 > 1000 or TVOC > 750):
+    if(eCO2 > CO2_MODERATE or TVOC > TVOC_MODERATE):
         turnOnRed()
-    elif(eCO2 > 500 or TVOC > 50):
+    elif(eCO2 > CO2_GOOD or TVOC > TVOC_GOOD):
         turnOnOrange()
     else:
         turnOnGreen()
