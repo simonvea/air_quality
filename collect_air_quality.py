@@ -34,10 +34,13 @@ def average(data):
     return round(sum(data) / len(data))
 
 def saveData(eCO2, TVOC, room = "office"):
-    if(useLocalDb):
-        saveLocally(eCO2, TVOC)
-    else:
-        saveToDb(eCO2, TVOC, room)
+    try:
+        if(useLocalDb):
+            saveLocally(eCO2, TVOC)
+        else:
+            saveToDb(eCO2, TVOC, room)
+    except:
+        print("Error saving data! Ignoring the error for now")
 
 
 latestCO2 = []
