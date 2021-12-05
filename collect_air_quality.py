@@ -60,6 +60,7 @@ while True:
         latestTVOC.clear()
         after = datetime.now()
         difference = after - before
-        time.sleep(1.0 - difference.total_seconds())
+        if(difference.total_seconds() < 1.0):
+            time.sleep(1.0 - difference.total_seconds())
         continue
     time.sleep(1.0)
